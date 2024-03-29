@@ -5,7 +5,6 @@ import (
 	"TaskRESTfulExercise/configs/errorCode"
 	"TaskRESTfulExercise/services/ginservices"
 	"TaskRESTfulExercise/services/mongodb"
-	"fmt"
 	"math"
 	"net/http"
 	"strconv"
@@ -14,6 +13,45 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"gopkg.in/mgo.v2/bson"
 )
+
+func PostTasks(c *gin.Context) {
+	type structRequest struct {
+		Name        string `json:"name" form:"name" binding:"required,max=30"`
+		Description string `json:"description" form:"description" binding:"required,max=256"`
+		Priority    int    `json:"priority" form:"priority" binding:"number"`
+		DueDate     string `json:"dueDate,omitempty" form:"dueDate,omitempty" binding:"-" time_format:"2006-01-02" time_utc:"8"`
+	}
+	var reqJSON structRequest
+	_, err := ginservices.GinRequest(c, &reqJSON)
+	if err != nil {
+		ginservices.GinRespone(c, "", "", errorCode.PARAMS_INVALID, err)
+		return
+	}
+
+	// Create mongo client
+	mgClient, err := mongodb.NewMongoClient()
+	if err != nil {
+		c.AbortWithStatus(http.StatusInternalServerError)
+		ginservices.GinRespone(c, "", "", errorCode.INTERAL_SERVER_ERROR, err)
+		return
+	}
+	taskDAO := taskmodel.NewDAO(mgClient)
+
+	newTask := &taskmodel.TaskDTO{
+		Name:        reqJSON.Name,
+		Description: reqJSON.Description,
+		Priority:    reqJSON.Priority,
+		DueDate:     reqJSON.DueDate,
+	}
+
+	result, err := taskDAO.Create(newTask)
+	if err != nil {
+		ginservices.GinRespone(c, "", "", errorCode.INTERAL_SERVER_ERROR, err)
+		return
+	}
+
+	ginservices.GinRespone(c, "", result, errorCode.SUCCESS, nil)
+}
 
 func GetTasks(c *gin.Context) {
 	type structRequest struct {
@@ -34,7 +72,6 @@ func GetTasks(c *gin.Context) {
 		return
 	}
 	taskDAO := taskmodel.NewDAO(mgClient)
-	fmt.Println("!!!", reqJSON)
 	skip := (reqJSON.Page - 1) * reqJSON.Limit
 
 	filter := bson.M{

@@ -14,6 +14,7 @@ func RegisterRoutes(router *gin.Engine) {
 	{
 		v1 := api.Group("/v1")
 		{
+			v1.POST("/tasks", task.PostTasks)
 			v1.GET("/tasks", task.GetTasks)
 		}
 
