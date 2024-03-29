@@ -1,0 +1,18 @@
+[app]
+    name = "TaskRESTfulExercise"
+
+[http]
+    port = "8080"
+    read_timeout = "30s"
+    write_timeout = "30s"
+
+[mongo]
+    ip="task-restful-exercise-mongo"
+    # ip="127.0.0.1"
+    port="27017"
+    # username="root"
+    # password="root"
+    username="user"
+    password="user_password"
+    poolsize="10"
+    database="task-restful-exercise"
