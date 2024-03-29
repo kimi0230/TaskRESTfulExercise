@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/fatih/structs"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"gopkg.in/mgo.v2/bson"
@@ -98,6 +99,44 @@ func GetTasks(c *gin.Context) {
 	c.Writer.Header().Set("x-total", strconv.Itoa(int(total)))
 	totalPages := math.Ceil(float64(total) / float64(reqJSON.Limit))
 	c.Writer.Header().Set("x-total-pages", strconv.Itoa(int(totalPages)))
+
+	ginservices.GinRespone(c, "", result, errorCode.SUCCESS, nil)
+}
+
+func PutTasks(c *gin.Context) {
+	type structRequest struct {
+		Name        string `json:"name" form:"name" binding:"max=30" structs:"name,omitempty"`
+		Description string `json:"description,omitempty" form:"description,omitempty" binding:"max=256" structs:"description,omitempty"`
+		Priority    int    `json:"priority,omitempty" form:"priority,omitempty" binding:"number" structs:"priority,omitempty"`
+		DueDate     string `json:"dueDate,omitempty" form:"dueDate,omitempty" binding:"-" time_format:"2006-01-02" time_utc:"8" structs:"dueDate,omitempty"`
+	}
+	var reqJSON structRequest
+	_, err := ginservices.GinRequest(c, &reqJSON)
+	if err != nil {
+		ginservices.GinRespone(c, "", "", errorCode.PARAMS_INVALID, err)
+		return
+	}
+	taskID := c.Param("id")
+	if taskID == "" {
+		ginservices.GinRespone(c, "", "", errorCode.PARAMS_INVALID, err)
+		return
+	}
+
+	// Create mongo client
+	mgClient, err := mongodb.NewMongoClient()
+	if err != nil {
+		c.AbortWithStatus(http.StatusInternalServerError)
+		ginservices.GinRespone(c, "", "", errorCode.INTERAL_SERVER_ERROR, err)
+		return
+	}
+
+	updateTaskFile := structs.Map(reqJSON)
+	taskDAO := taskmodel.NewDAO(mgClient)
+	result, err := taskDAO.Update(taskID, updateTaskFile)
+	if err != nil {
+		ginservices.GinRespone(c, "", "", errorCode.INTERAL_SERVER_ERROR, err)
+		return
+	}
 
 	ginservices.GinRespone(c, "", result, errorCode.SUCCESS, nil)
 }

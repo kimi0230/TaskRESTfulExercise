@@ -96,6 +96,7 @@ func (dao *TaskDAO) Update(id string, updateFields map[string]interface{}) (*mon
 		return nil, err
 	}
 	filter := bson.M{"_id": objID}
+	updateFields["updated_at"] = time.Now()
 	update := bson.M{"$set": updateFields}
 	result, err := dao.collection.UpdateOne(context.Background(), filter, update)
 	if err != nil {
