@@ -15,6 +15,11 @@ docker-compose start
 docker-compose stop
 ```
 
+## Local test
+```sh
+air -c air.toml http --port 5566
+```
+
 ## Information
 ### MongoDB 
 Initializing mongo db in docker-compose with init script.

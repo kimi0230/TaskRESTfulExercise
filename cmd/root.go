@@ -56,7 +56,6 @@ func init() {
 }
 
 func initConfig() {
-
 	viper.SetConfigFile(cfgFile)
 
 	if err := viper.ReadInConfig(); err != nil {
