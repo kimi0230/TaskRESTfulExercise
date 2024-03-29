@@ -110,10 +110,11 @@ func GetTasks(c *gin.Context) {
 
 func PutTasks(c *gin.Context) {
 	type structRequest struct {
-		Name        string `json:"name" form:"name" binding:"max=30" structs:"name,omitempty"`
-		Description string `json:"description,omitempty" form:"description,omitempty" binding:"max=256" structs:"description,omitempty"`
-		Priority    int    `json:"priority,omitempty" form:"priority,omitempty" binding:"number" structs:"priority,omitempty"`
-		DueDate     string `json:"dueDate,omitempty" form:"dueDate,omitempty" binding:"-" time_format:"2006-01-02" time_utc:"8" structs:"dueDate,omitempty"`
+		Name        string  `json:"name" form:"name" binding:"required,max=30" structs:"name"`
+		Description *string `json:"description" form:"description" binding:"required,max=256" structs:"description"`
+		Priority    *int    `json:"priority" form:"priority" binding:"required,number" structs:"priority"`
+		Status      int     `json:"status" form:"status" binding:"oneof=0 1" structs:"required,status"`
+		DueDate     *string `json:"dueDate,omitempty" form:"dueDate" binding:"required" time_format:"2006-01-02" time_utc:"8" structs:"due_date"`
 	}
 	var reqJSON structRequest
 	_, err := ginservices.GinRequest(c, &reqJSON)
@@ -137,12 +138,16 @@ func PutTasks(c *gin.Context) {
 
 	updateTaskFile := structs.Map(reqJSON)
 	taskDAO := taskmodel.NewDAO(mgClient)
-	result, err := taskDAO.Update(taskID, updateTaskFile)
+	_, err = taskDAO.Update(taskID, updateTaskFile)
 	if err != nil {
 		ginservices.GinRespone(c, "", "", errorCode.INTERAL_SERVER_ERROR, err)
 		return
 	}
-
+	result, err := taskDAO.GetByID(taskID)
+	if err != nil {
+		ginservices.GinRespone(c, "", "", errorCode.INTERAL_SERVER_ERROR, err)
+		return
+	}
 	ginservices.GinRespone(c, "", result, errorCode.SUCCESS, nil)
 }
 
