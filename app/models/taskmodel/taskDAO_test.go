@@ -35,7 +35,7 @@ func TestCreate(t *testing.T) {
 		t.Errorf("ConnectMongoDB :%v", err)
 	}
 
-	taskDAO := NewTaskDAOwithName(mgClient, DATABASE, COLNAME)
+	taskDAO := NewDAOwithName(mgClient, DATABASE, COLNAME)
 
 	for _, tt := range tests {
 		if _, err := taskDAO.Create(&tt.arg1); err != nil {
@@ -57,7 +57,7 @@ func TestGetByID(t *testing.T) {
 		t.Errorf("ConnectMongoDB :%v", err)
 	}
 
-	taskDAO := NewTaskDAOwithName(mgClient, DATABASE, COLNAME)
+	taskDAO := NewDAOwithName(mgClient, DATABASE, COLNAME)
 
 	for _, tt := range tests {
 		if task, err := taskDAO.GetByID(tt.arg1); err != nil {
@@ -86,7 +86,7 @@ func TestUpdate(t *testing.T) {
 		t.Errorf("ConnectMongoDB :%v", err)
 	}
 
-	taskDAO := NewTaskDAOwithName(mgClient, DATABASE, COLNAME)
+	taskDAO := NewDAOwithName(mgClient, DATABASE, COLNAME)
 
 	for _, tt := range tests {
 		if task, err := taskDAO.Update(tt.arg1, tt.arg2); err != nil {
@@ -113,7 +113,7 @@ func TestDelete(t *testing.T) {
 		t.Errorf("ConnectMongoDB :%v", err)
 	}
 
-	taskDAO := NewTaskDAOwithName(mgClient, DATABASE, COLNAME)
+	taskDAO := NewDAOwithName(mgClient, DATABASE, COLNAME)
 
 	for _, tt := range tests {
 		if task, err := taskDAO.Delete(tt.arg1); err != nil {

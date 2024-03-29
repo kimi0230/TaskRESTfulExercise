@@ -28,13 +28,13 @@ type TaskDAO struct {
 	collection *mongo.Collection
 }
 
-func NewTaskDAO(client *mongo.Client) *TaskDAO {
+func NewDAO(client *mongo.Client) *TaskDAO {
 	return &TaskDAO{
 		collection: client.Database(viper.GetString("mongo.database")).Collection(COLLECTION_NAME),
 	}
 }
 
-func NewTaskDAOwithName(client *mongo.Client, dbName, collName string) *TaskDAO {
+func NewDAOwithName(client *mongo.Client, dbName, collName string) *TaskDAO {
 	return &TaskDAO{
 		collection: client.Database(dbName).Collection(collName),
 	}
@@ -56,16 +56,16 @@ func (dao *TaskDAO) GetByID(id string) (*TaskDTO, error) {
 		return nil, err
 	}
 	filter := bson.M{"_id": objID}
-	var user TaskDTO
-	err = dao.collection.FindOne(context.Background(), filter).Decode(&user)
+	var task TaskDTO
+	err = dao.collection.FindOne(context.Background(), filter).Decode(&task)
 	if err != nil {
 		return nil, err
 	}
-	return &user, nil
+	return &task, nil
 }
 
 func (dao *TaskDAO) GetByQuery(filter interface{}, limit int64, skip int64, order string, by string) (*[]TaskDTO, error) {
-	var users []TaskDTO
+	var tasks []TaskDTO
 	ctx := context.Background()
 	opts := options.Find().SetSkip(skip).SetLimit(limit)
 	// Handle Order
@@ -83,11 +83,11 @@ func (dao *TaskDAO) GetByQuery(filter interface{}, limit int64, skip int64, orde
 	}
 	defer cur.Close(ctx)
 
-	if err = cur.All(ctx, &users); err != nil {
+	if err = cur.All(ctx, &tasks); err != nil {
 		panic(err)
 	}
 
-	return &users, nil
+	return &tasks, nil
 }
 
 func (dao *TaskDAO) Update(id string, updateFields map[string]interface{}) (*mongo.UpdateResult, error) {

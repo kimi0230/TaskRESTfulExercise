@@ -2,6 +2,7 @@ package routes
 
 import (
 	"TaskRESTfulExercise/app/api/heartbeat"
+	"TaskRESTfulExercise/app/api/task"
 
 	"github.com/gin-gonic/gin"
 )
@@ -9,12 +10,12 @@ import (
 func RegisterRoutes(router *gin.Engine) {
 	router.GET("/ping", heartbeat.Ping)
 
-	// api := router.Group("/api")
-	// {
-	// 	v1 := api.Group("/v1")
-	// 	{
+	api := router.Group("/api")
+	{
+		v1 := api.Group("/v1")
+		{
+			v1.GET("/tasks", task.GetTasks)
+		}
 
-	// 	}
-
-	// }
+	}
 }
