@@ -4,7 +4,6 @@ import (
 	"TaskRESTfulExercise/services/mongodb"
 	"fmt"
 	"testing"
-	"time"
 )
 
 var (
@@ -23,10 +22,9 @@ func TestCreate(t *testing.T) {
 	}{
 		{
 			TaskDTO{
-				Name:      "task-0001",
-				Status:    0,
-				DueDate:   time.Now().Add(time.Duration(time.Hour * 24)),
-				Timestamp: time.Now(),
+				Name:        "unit-test-task-0001",
+				Description: "Daily run",
+				Status:      0,
 			},
 		},
 	}
@@ -49,7 +47,7 @@ func TestGetByID(t *testing.T) {
 		arg1 string
 	}{
 		{
-			arg1: "6606a575afc8ae7b93c642b4",
+			arg1: "6606dceb769701ce928ab64c",
 		},
 	}
 	mgClient, err := mongodb.ConnectMongoDB(IP, PORT, USERNAME, PASSWORD, POOLSIZE, DATABASE)
@@ -74,7 +72,7 @@ func TestUpdate(t *testing.T) {
 		arg2 map[string]interface{}
 	}{
 		{
-			arg1: "6606a575afc8ae7b93c642b4",
+			arg1: "6606dceb769701ce928ab64c",
 			arg2: map[string]interface{}{
 				"name":   "task-0002",
 				"status": 1,
@@ -105,7 +103,7 @@ func TestDelete(t *testing.T) {
 			arg1: "6606a575afc8ae7b93c642b4",
 		},
 		{
-			arg1: "6606a6185d2090adab3ca1a5",
+			arg1: "6606dceb769701ce928ab64c",
 		},
 	}
 	mgClient, err := mongodb.ConnectMongoDB(IP, PORT, USERNAME, PASSWORD, POOLSIZE, DATABASE)
