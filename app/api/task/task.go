@@ -5,6 +5,7 @@ import (
 	"TaskRESTfulExercise/configs/errorCode"
 	"TaskRESTfulExercise/services/ginservices"
 	"TaskRESTfulExercise/services/mongodb"
+	"errors"
 	"math"
 	"net/http"
 	"strconv"
@@ -13,6 +14,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"gopkg.in/mgo.v2/bson"
+)
+
+var (
+	errNoID = errors.New("Can't Find ID")
 )
 
 func PostTasks(c *gin.Context) {
@@ -118,7 +123,7 @@ func PutTasks(c *gin.Context) {
 	}
 	taskID := c.Param("id")
 	if taskID == "" {
-		ginservices.GinRespone(c, "", "", errorCode.PARAMS_INVALID, err)
+		ginservices.GinRespone(c, "", "", errorCode.PARAMS_INVALID, errNoID)
 		return
 	}
 
@@ -139,4 +144,29 @@ func PutTasks(c *gin.Context) {
 	}
 
 	ginservices.GinRespone(c, "", result, errorCode.SUCCESS, nil)
+}
+
+func DeleteTasks(c *gin.Context) {
+	taskID := c.Param("id")
+	if taskID == "" {
+		ginservices.GinRespone(c, "", "", errorCode.PARAMS_INVALID, errNoID)
+		return
+	}
+
+	// Create mongo client
+	mgClient, err := mongodb.NewMongoClient()
+	if err != nil {
+		c.AbortWithStatus(http.StatusInternalServerError)
+		ginservices.GinRespone(c, "", "", errorCode.INTERAL_SERVER_ERROR, err)
+		return
+	}
+
+	taskDAO := taskmodel.NewDAO(mgClient)
+	_, err = taskDAO.Delete(taskID)
+	if err != nil {
+		ginservices.GinRespone(c, "", "", errorCode.INTERAL_SERVER_ERROR, err)
+		return
+	}
+
+	ginservices.GinRespone(c, "", "", errorCode.SUCCESS, nil)
 }
