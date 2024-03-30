@@ -15,6 +15,14 @@ var SUCCESS = map[string]interface{}{
 	"httpCode": http.StatusOK,
 }
 
+// 201
+var CREATED = map[string]interface{}{
+	"code":     "201-API-V1-0001",
+	"status":   false,
+	"message":  "Accepted",
+	"httpCode": http.StatusCreated,
+}
+
 // 202
 var ACCEPTED = map[string]interface{}{
 	"code":     "202-API-V1-0001",

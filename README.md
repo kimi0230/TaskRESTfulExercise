@@ -1,7 +1,8 @@
 # Task Restful Exercise
 
-Implement a restful task API application
+Implement a RESTful task API application by `golang` and `gin`
 
+<video src="assets/videos/demo.mov" width="720" height="480" controls></video>
 
 ## Start Server
 
@@ -11,14 +12,19 @@ make run
 
 # by docker-compose
 docker-compose up --build
-docker-compose start
-docker-compose stop
 ```
+
+![](assets/images/docker.png)
 
 ## Local test
 ```sh
 air -c air.toml http --port 5566
 ```
+
+## API Doc
+Please refer [docs/api.md](./docs/api.md)
+
+![](assets/images/apis.png)
 
 ## Information
 ### MongoDB 

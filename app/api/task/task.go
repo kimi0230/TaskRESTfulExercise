@@ -50,13 +50,19 @@ func PostTasks(c *gin.Context) {
 		DueDate:     reqJSON.DueDate,
 	}
 
-	result, err := taskDAO.Create(newTask)
+	insertedTask, err := taskDAO.Create(newTask)
+	if err != nil {
+		ginservices.GinRespone(c, "", "", errorCode.INTERAL_SERVER_ERROR, err)
+		return
+	}
+	insertedID := insertedTask.InsertedID.(primitive.ObjectID)
+	result, err := taskDAO.GetByID(insertedID.Hex())
 	if err != nil {
 		ginservices.GinRespone(c, "", "", errorCode.INTERAL_SERVER_ERROR, err)
 		return
 	}
 
-	ginservices.GinRespone(c, "", result, errorCode.SUCCESS, nil)
+	ginservices.GinRespone(c, "", result, errorCode.CREATED, nil)
 }
 
 func GetTasks(c *gin.Context) {
