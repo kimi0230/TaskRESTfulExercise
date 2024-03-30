@@ -2,7 +2,9 @@
 
 Implement a RESTful task API application by `golang` and `gin`
 
-<video src="assets/videos/demo.mov" width="720" height="480" controls></video>
+
+[![demo.mp4](assets/images/demo.png)](https://drive.google.com/file/d/1l5SuhgK_TNOP44ltzwZLiRym5UT2nsJk/view?usp=sharing)
+Video: https://drive.google.com/file/d/1l5SuhgK_TNOP44ltzwZLiRym5UT2nsJk/view?usp=sharing
 
 ## Start Server
 
