@@ -119,7 +119,7 @@ func PutTasks(c *gin.Context) {
 		Name        string  `json:"name" form:"name" binding:"required,max=30" structs:"name"`
 		Description *string `json:"description" form:"description" binding:"required,max=256" structs:"description"`
 		Priority    *int    `json:"priority" form:"priority" binding:"required,number" structs:"priority"`
-		Status      int     `json:"status" form:"status" binding:"oneof=0 1" structs:"required,status"`
+		Status      *int    `json:"status" form:"status" binding:"required,oneof=0 1" structs:"status"`
 		DueDate     *string `json:"dueDate" form:"dueDate" binding:"required" time_format:"2006-01-02" time_utc:"8" structs:"due_date"`
 	}
 	var reqJSON structRequest
